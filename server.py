@@ -30,53 +30,81 @@ import socketserver,os
 class MyWebServer(socketserver.BaseRequestHandler):
 
     def handle(self):
+
         self.data = self.request.recv(1024).strip()
+        if self.data:
         #print("Got a request of: %s\n" % self.data)
-        req = self.data.decode().split()
-        path=req[1]
-        if req[0]!="GET":
-            self.request.send("HTTP/1.1 405\r\n\r\n".encode())
-        else:
-            if path.endswith("/"):
-                try:
-                    content = open("./www"+path+"index.html",'r').read()
-                    self.request.send("HTTP/1.1 200 OK \r\n".encode())
-                    self.request.send("Content-Type: text/html; \r\n\r\n".encode())
-                    self.request.send(content.encode())
-                except:
-                    self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
+            req = self.data.decode().split()
+            path=req[1]
+            if req[0]!="GET":
+                self.request.send("HTTP/1.1 405 Method Not Allowed\r\n\r\n".encode())
+                na="405 Method Not Allowed"
+                cl="Content-Length: "+str(len(na))+"\r\n\r\n"
+                self.request.send(cl.encode())
+                self.request.send(na.encode())
             else:
-                if path[-4:]!=".css" and path[-5:]!=".html":
-                    newpath="./www"+path+"/index.html"
-                    if os.path.exists(newpath):
-                        content = open(newpath).read()
-                        print("EXIST")
-
-                        location = "Location: http://127.0.0.1:8080"+ path+"/\r\n\r\n"
-                        #location = "Location: http://127.0.0.1:8080/deep/index.html\r\n"
-                        self.request.send(b"HTTP/1.1 301 Moved Permanently\r\n")
-                        self.request.send(location.encode())
-                        #self.request.send(content.encode())
-                    else:
-                        self.request.send("HTTP/1.1 404 Not Found \r\n\r\n".encode())
+                if path.endswith("/"):
+                    try:
+                        content = open("./www"+path+"index.html",'r').read()
+                        cl="Content-Length: "+str(len(content))+"\r\n\r\n"
+                        self.request.send("HTTP/1.1 200 OK \r\n".encode())
+                        self.request.send("Content-Type: text/html; \r\n".encode())
+                        self.request.send(cl.encode())
+                        self.request.send(content.encode())
+                    except:
+                        self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
+                        nf="404 Not Found"
+                        cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                        self.request.send(cl.encode())
+                        self.request.send(nf.encode())
                 else:
-                    if req[1][-4:]==".css":
-                        if os.path.exists("./www"+path):
-                            content = open("./www"+req[1],'r').read()
-                            self.request.send("HTTP/1.1 200 OK \r\n".encode())
-                            self.request.send("Content-Type: text/css \r\n\r\n".encode())
-                            self.request.send(content.encode())
-                        else:
-                            self.request.send("HTTP/1.1 404 Not Found \r\n\r\n".encode())
+                    if path[-4:]!=".css" and path[-5:]!=".html":
+                        newpath="./www"+path+"/index.html"
+                        if os.path.exists(newpath):
+                            content = open(newpath).read()
+                            #print("EXIST")
 
-                    elif req[1][-5:]==".html":
-                        if os.path.exists("./www"+path):
-                            content = open("./www"+req[1],'r').read()
-                            self.request.send("HTTP/1.1 200 OK\r\n".encode())
-                            self.request.send("Content-Type: text/html \r\n\r\n".encode())
-                            self.request.send(content.encode())
+                            location = "Location: http://127.0.0.1:8080"+ path+"/\r\n\r\n"
+                            #location = "Location: http://127.0.0.1:8080/deep/index.html\r\n"
+                            self.request.send(b"HTTP/1.1 301 Moved Permanently\r\n")
+                            self.request.send(location.encode())
+                            #self.request.send(content.encode())
                         else:
-                            self.request.send("HTTP/1.1 404 Not Found \r\n\r\n".encode())
+                            self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
+                            nf="404 Not Found"
+                            cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                            self.request.send(cl.encode())
+                            self.request.send(nf.encode())
+                    else:
+                        if req[1][-4:]==".css":
+                            if os.path.exists("./www"+path):
+                                content = open("./www"+req[1],'r').read()
+                                cl="Content-Length: "+str(len(content))+"\r\n\r\n"
+                                self.request.send("HTTP/1.1 200 OK \r\n".encode())
+                                self.request.send("Content-Type: text/css \r\n".encode())
+                                self.request.send(cl.encode())
+                                self.request.send(content.encode())
+                            else:
+                                self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
+                                nf="404 Not Found"
+                                cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                                self.request.send(cl.encode())
+                                self.request.send(nf.encode())
+
+                        elif req[1][-5:]==".html":
+                            if os.path.exists("./www"+path):
+                                content = open("./www"+req[1],'r').read()
+                                cl="Content-Length: "+str(len(content))+"\r\n\r\n"
+                                self.request.send("HTTP/1.1 200 OK\r\n".encode())
+                                self.request.send("Content-Type: text/html \r\n".encode())
+                                self.request.send(cl.encode())
+                                self.request.send(content.encode())
+                            else:
+                                self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
+                                nf="404 Not Found"
+                                cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                                self.request.send(cl.encode())
+                                self.request.send(nf.encode())
 
 
 
