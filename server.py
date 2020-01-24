@@ -40,7 +40,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             #Return a status code of “405 Method Not Allowed” for any method you cannot handle (POST/PUT/DELETE)
             if req[0]!="GET":
                 self.request.send("HTTP/1.1 405 Method Not Allowed\r\n".encode())
-                na="<html>\n<body>\n405 Method Not Allowed:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                na="<html>\n<body>\n405 Method Not Allowed:http://127.0.0.1:8080"+path+"\n</body>\n</html>\n"
                 cl="Content-Length: "+str(len(na))+"\r\n"
                 self.request.send(cl.encode())
                 self.request.send(b"Connection: close\r\n\r\n")
@@ -62,7 +62,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     except:
                         #The webserver can server 404 errors for paths not found
                         self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                        nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                        nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>\n"
                         cl="Content-Length: "+str(len(nf))+"\r\n"
                         self.request.send(cl.encode())
                         self.request.send(b"Connection: close\r\n\r\n")
@@ -83,7 +83,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                             #self.request.send(content.encode())
                         else:
                             self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                            nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                            nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>\n"
                             cl="Content-Length: "+str(len(nf))+"\r\n"
                             self.request.send(cl.encode())
                             self.request.send(b"Connection: close\r\n\r\n")
@@ -101,7 +101,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 self.request.send(content.encode())
                             else:
                                 self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                                nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                                nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>\n"
                                 cl="Content-Length: "+str(len(nf))+"\r\n"
                                 self.request.send(cl.encode())
                                 self.request.send(b"Connection: close\r\n\r\n")
@@ -119,7 +119,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 self.request.send(content.encode())
                             else:
                                 self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                                nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                                nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>\n"
                                 cl="Content-Length: "+str(len(nf))+"\r\n"
                                 self.request.send(cl.encode())
                                 self.request.send(b"Connection: close\r\n\r\n")
