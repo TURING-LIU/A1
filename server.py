@@ -37,7 +37,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
         #print("Got a request of: %s\n" % self.data)
             req = self.data.decode().split()
             path=req[1]
-
+            #Return a status code of “405 Method Not Allowed” for any method you cannot handle (POST/PUT/DELETE)
             if req[0]!="GET":
                 self.request.send("HTTP/1.1 405 Method Not Allowed\r\n".encode())
                 na="<html>\n<body>\n405 Method Not Allowed:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
@@ -46,6 +46,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.request.send(b"Connection: close\r\n\r\n")
                 self.request.send(na.encode())
             else:
+                #The webserver can return index.html from directories (paths that end in /)
                 if path.endswith("/")and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
 
                     try:
@@ -57,6 +58,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                         self.request.send(b"Connection: close\r\n\r\n")
                         self.request.send(content.encode())
                     except:
+                        #The webserver can server 404 errors for paths not found
                         self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
                         nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
                         cl="Content-Length: "+str(len(nf))+"\r\n"
@@ -66,6 +68,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 else:
                     if not path.endswith(".css") and not path.endswith(".html"):
                         newpath="./www"+path+"/index.html"
+                        #Must use 301 to correct paths such as http://127.0.0.1:8080/deep to http://127.0.0.1:8080/deep/ (path ending)
                         if os.path.exists(newpath) and os.path.abspath("./www"+newpath).startswith(os.getcwd()+"/www"):
                             content = open(newpath).read()
                             #print("EXIST")
@@ -84,6 +87,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                             self.request.send(b"Connection: close\r\n\r\n")
                             self.request.send(nf.encode())
                     else:
+                        #The webserver supports mime-types for CSS
                         if path.endswith(".css"):
                             if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
                                 content = open("./www"+path,'r').read()
@@ -102,6 +106,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 self.request.send(nf.encode())
 
                         elif path.endswith(".html"):
+                            #The webserver supports mime-types for HTML
                             if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
                                 content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
