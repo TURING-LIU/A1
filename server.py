@@ -46,7 +46,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.request.send(b"Connection: close\r\n\r\n")
                 self.request.send(na.encode())
             else:
-                if path.endswith("/")and os.path.abspath("./www"+path).startswith(os.getcwd()):
+                if path.endswith("/")and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
 
                     try:
                         content = open("./www"+path+"index.html",'r').read()
@@ -66,7 +66,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 else:
                     if path[-4:]!=".css" and path[-5:]!=".html":
                         newpath="./www"+path+"/index.html"
-                        if os.path.exists(newpath) and os.path.abspath("./www"+newpath).startswith(os.getcwd()):
+                        if os.path.exists(newpath) and os.path.abspath("./www"+newpath).startswith(os.getcwd()+"/www"):
                             content = open(newpath).read()
                             #print("EXIST")
 
@@ -84,9 +84,9 @@ class MyWebServer(socketserver.BaseRequestHandler):
                             self.request.send(b"Connection: close\r\n\r\n")
                             self.request.send(nf.encode())
                     else:
-                        if req[1][-4:]==".css":
-                            if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()):
-                                content = open("./www"+req[1],'r').read()
+                        if path[-4:]==".css":
+                            if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
+                                content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK \r\n".encode())
                                 self.request.send("Content-Type: text/css \r\n".encode())
@@ -101,9 +101,9 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(nf.encode())
 
-                        elif req[1][-5:]==".html":
+                        elif path[-5:]==".html":
                             if os.path.exists("./www"+path):
-                                content = open("./www"+req[1],'r').read()
+                                content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK\r\n".encode())
                                 self.request.send("Content-Type: text/html \r\n".encode())
