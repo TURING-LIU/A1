@@ -37,25 +37,28 @@ class MyWebServer(socketserver.BaseRequestHandler):
             req = self.data.decode().split()
             path=req[1]
             if req[0]!="GET":
-                self.request.send("HTTP/1.1 405 Method Not Allowed\r\n\r\n".encode())
-                na="405 Method Not Allowed"
-                cl="Content-Length: "+str(len(na))+"\r\n\r\n"
+                self.request.send("HTTP/1.1 405 Method Not Allowed\r\n".encode())
+                na="<html>\n<body>\n405 Method Not Allowed:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                cl="Content-Length: "+str(len(na))+"\r\n"
                 self.request.send(cl.encode())
+                self.request.send(b"Connection: close\r\n\r\n")
                 self.request.send(na.encode())
             else:
                 if path.endswith("/"):
                     try:
                         content = open("./www"+path+"index.html",'r').read()
-                        cl="Content-Length: "+str(len(content))+"\r\n\r\n"
+                        cl="Content-Length: "+str(len(content))+"\r\n"
                         self.request.send("HTTP/1.1 200 OK \r\n".encode())
                         self.request.send("Content-Type: text/html; \r\n".encode())
                         self.request.send(cl.encode())
+                        self.request.send(b"Connection: close\r\n\r\n")
                         self.request.send(content.encode())
                     except:
                         self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                        nf="404 Not Found"
-                        cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                        nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                        cl="Content-Length: "+str(len(nf))+"\r\n"
                         self.request.send(cl.encode())
+                        self.request.send(b"Connection: close\r\n\r\n")
                         self.request.send(nf.encode())
                 else:
                     if path[-4:]!=".css" and path[-5:]!=".html":
@@ -64,46 +67,52 @@ class MyWebServer(socketserver.BaseRequestHandler):
                             content = open(newpath).read()
                             #print("EXIST")
 
-                            location = "Location: http://127.0.0.1:8080"+ path+"/\r\n\r\n"
+                            location = "Location: http://127.0.0.1:8080"+ path+"/\r\n"
                             #location = "Location: http://127.0.0.1:8080/deep/index.html\r\n"
                             self.request.send(b"HTTP/1.1 301 Moved Permanently\r\n")
                             self.request.send(location.encode())
+                            self.request.send(b"Connection: close\r\n\r\n")
                             #self.request.send(content.encode())
                         else:
                             self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                            nf="404 Not Found"
-                            cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                            nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                            cl="Content-Length: "+str(len(nf))+"\r\n"
                             self.request.send(cl.encode())
+                            self.request.send(b"Connection: close\r\n\r\n")
                             self.request.send(nf.encode())
                     else:
                         if req[1][-4:]==".css":
                             if os.path.exists("./www"+path):
                                 content = open("./www"+req[1],'r').read()
-                                cl="Content-Length: "+str(len(content))+"\r\n\r\n"
+                                cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK \r\n".encode())
                                 self.request.send("Content-Type: text/css \r\n".encode())
                                 self.request.send(cl.encode())
+                                self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(content.encode())
                             else:
                                 self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                                nf="404 Not Found"
-                                cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                                nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                                cl="Content-Length: "+str(len(nf))+"\r\n"
                                 self.request.send(cl.encode())
+                                self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(nf.encode())
 
                         elif req[1][-5:]==".html":
                             if os.path.exists("./www"+path):
                                 content = open("./www"+req[1],'r').read()
-                                cl="Content-Length: "+str(len(content))+"\r\n\r\n"
+                                cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK\r\n".encode())
                                 self.request.send("Content-Type: text/html \r\n".encode())
                                 self.request.send(cl.encode())
+                                self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(content.encode())
                             else:
                                 self.request.send("HTTP/1.1 404 Not Found \r\n".encode())
-                                nf="404 Not Found"
-                                cl="Content-Length: "+str(len(nf))+"\r\n\r\n"
+                                nf="<html>\n<body>\n404 Not Found:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
+                                cl="Content-Length: "+str(len(nf))+"\r\n"
                                 self.request.send(cl.encode())
+                                self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(nf.encode())
 
 
