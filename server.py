@@ -33,9 +33,11 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
         self.data = self.request.recv(1024).strip()
         if self.data:
+
         #print("Got a request of: %s\n" % self.data)
             req = self.data.decode().split()
             path=req[1]
+
             if req[0]!="GET":
                 self.request.send("HTTP/1.1 405 Method Not Allowed\r\n".encode())
                 na="<html>\n<body>\n405 Method Not Allowed:http://127.0.0.1:8080"+path+"\n</body>\n</html>"
@@ -44,7 +46,8 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.request.send(b"Connection: close\r\n\r\n")
                 self.request.send(na.encode())
             else:
-                if path.endswith("/"):
+                if path.endswith("/")and os.path.abspath("./www"+path).startswith(os.getcwd()):
+
                     try:
                         content = open("./www"+path+"index.html",'r').read()
                         cl="Content-Length: "+str(len(content))+"\r\n"
@@ -63,7 +66,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 else:
                     if path[-4:]!=".css" and path[-5:]!=".html":
                         newpath="./www"+path+"/index.html"
-                        if os.path.exists(newpath):
+                        if os.path.exists(newpath) and os.path.abspath("./www"+newpath).startswith(os.getcwd()):
                             content = open(newpath).read()
                             #print("EXIST")
 
@@ -82,7 +85,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                             self.request.send(nf.encode())
                     else:
                         if req[1][-4:]==".css":
-                            if os.path.exists("./www"+path):
+                            if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()):
                                 content = open("./www"+req[1],'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK \r\n".encode())
