@@ -47,13 +47,15 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.request.send(na.encode())
             else:
                 #The webserver can return index.html from directories (paths that end in /)
+                #Secure: https://docs.python.org/2/library/os.path.html
                 if path.endswith("/")and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
 
                     try:
                         content = open("./www"+path+"index.html",'r').read()
                         cl="Content-Length: "+str(len(content))+"\r\n"
                         self.request.send("HTTP/1.1 200 OK \r\n".encode())
-                        self.request.send("Content-Type: text/html; \r\n".encode())
+                        #https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
+                        self.request.send("Content-Type: text/html; charset=UTF-8 \r\n".encode())
                         self.request.send(cl.encode())
                         self.request.send(b"Connection: close\r\n\r\n")
                         self.request.send(content.encode())
@@ -93,7 +95,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK \r\n".encode())
-                                self.request.send("Content-Type: text/css \r\n".encode())
+                                self.request.send("Content-Type: text/css; charset=UTF-8 \r\n".encode())
                                 self.request.send(cl.encode())
                                 self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(content.encode())
@@ -111,7 +113,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK\r\n".encode())
-                                self.request.send("Content-Type: text/html \r\n".encode())
+                                self.request.send("Content-Type: text/html; charset=UTF-8 \r\n".encode())
                                 self.request.send(cl.encode())
                                 self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(content.encode())
