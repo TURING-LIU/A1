@@ -102,7 +102,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 self.request.send(nf.encode())
 
                         elif path.endswith(".html"):
-                            if os.path.exists("./www"+path):
+                            if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
                                 content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
                                 self.request.send("HTTP/1.1 200 OK\r\n".encode())
