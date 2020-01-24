@@ -64,7 +64,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                         self.request.send(b"Connection: close\r\n\r\n")
                         self.request.send(nf.encode())
                 else:
-                    if path[-4:]!=".css" and path[-5:]!=".html":
+                    if not path.endswith(".css") and not path.endswith(".html"):
                         newpath="./www"+path+"/index.html"
                         if os.path.exists(newpath) and os.path.abspath("./www"+newpath).startswith(os.getcwd()+"/www"):
                             content = open(newpath).read()
@@ -84,7 +84,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                             self.request.send(b"Connection: close\r\n\r\n")
                             self.request.send(nf.encode())
                     else:
-                        if path[-4:]==".css":
+                        if path.endswith(".css"):
                             if os.path.exists("./www"+path) and os.path.abspath("./www"+path).startswith(os.getcwd()+"/www"):
                                 content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
@@ -101,7 +101,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                                 self.request.send(b"Connection: close\r\n\r\n")
                                 self.request.send(nf.encode())
 
-                        elif path[-5:]==".html":
+                        elif path.endswith(".html"):
                             if os.path.exists("./www"+path):
                                 content = open("./www"+path,'r').read()
                                 cl="Content-Length: "+str(len(content))+"\r\n"
